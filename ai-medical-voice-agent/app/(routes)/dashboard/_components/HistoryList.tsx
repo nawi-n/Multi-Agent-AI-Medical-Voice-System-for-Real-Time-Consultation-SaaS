@@ -9,7 +9,7 @@ function HistoryList() {
   return (
     <div className="mt-10">
       {historyList.length === 0 ? (
-        <div className="flex items-center flex-col justify-center p-7 border border-dashed rounded-2xl border-2">
+        <div className="flex items-center flex-col justify-center p-7 border-dashed rounded-2xl border-2">
           <Image
             src={"/medical-assistance.png"}
             alt="empty"
