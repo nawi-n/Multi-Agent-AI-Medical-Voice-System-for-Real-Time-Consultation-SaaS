@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import { Button } from '@/app/_components/button'
+import { Button } from '@/components/ui/button'
 import { IconArrowRight } from '@tabler/icons-react'
 
 type DoctorAgent = {

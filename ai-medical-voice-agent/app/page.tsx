@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
-import { Button } from "./_components/button";
+import { Button } from "../components/ui/button";
 import { motion } from "motion/react";
-import { FeatureBentoGrid } from "./_components/FeatureBentoGrid";
+import { FeatureBentoGrid } from "../components/ui/FeatureBentoGrid";
 import { UserButton, useUser } from "@clerk/nextjs";
 
 export default  function HeroSectionOne() {
