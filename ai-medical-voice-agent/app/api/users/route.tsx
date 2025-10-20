@@ -10,15 +10,18 @@ try{
     const users = await db.select().from(usersTable)
     //@ts-ignore
     .where(eq(usersTable.email,user?.primaryEmailAddress?.emailAddress));
-    if(users.length === 0){
+    
+    if(users?.length === 0){
         const result = await db.insert(usersTable).values({
+            //@ts-ignore
             name: user?.fullName || 'No Name',
             email: user?.primaryEmailAddress?.emailAddress || 'No Email',
-            credita:10
-        }).returning();
-        return NextResponse.json(result[0]);
+            credits:10
+            //@ts-ignore
+        }).returning({usersTable})
+        return NextResponse.json(result[0]?.usersTable);
     }
-    return NextResponse.json(users[0]);
+    return NextResponse.json(users);
 }
 catch(e){
     return NextResponse.json(e);
