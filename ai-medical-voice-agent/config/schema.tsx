@@ -9,7 +9,7 @@ export const usersTable = pgTable("users", {
 
 export const sessionChatTable = pgTable("sessionChartTable", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  sessionId: integer().notNull(),
+  sessionId: varchar().notNull(),
   notes: text(),
   selectedDoctor: json(),
   conversation: json(),

@@ -13,16 +13,16 @@ export async function POST(req: NextRequest) {
     const result = await db
       .insert(sessionChatTable)
       .values({
+        //@ts-ignore
         sessionId: sessionId,
         createdBy: user?.primaryEmailAddress?.emailAddress,
         notes: notes,
         selectedDoctor: selectedDoctor,
         createdOn: new Date().toString(),
-        //@ts-ignore
-      })
+      }) //@ts-ignore
       .returning({ sessionChatTable });
-    return NextResponse.json(result);
+    return NextResponse.json(result[0].sessionChatTable);
   } catch (e) {
-    NextResponse.json(e);
+    return NextResponse.json(e);
   }
 }

@@ -5,12 +5,20 @@ import Image from "next/image";
 type Props = {
   doctorAgent: DoctorAgent;
   setSelectedDoctor: any;
+  selectedDoctor: DoctorAgent;
 };
 
-function SuggestedDoctorCard({ doctorAgent, setSelectedDoctor }: Props) {
+function SuggestedDoctorCard({
+  doctorAgent,
+  setSelectedDoctor,
+  selectedDoctor,
+}: Props) {
   return (
     <div
-      className="flex flex-col items-center border rounded-2xl shadow p-4 hover:border-blue-500 transition cursor-pointer"
+      className={`flex flex-col items-center border rounded-2xl 
+        shadow p-5 hover:border-blue-500 transition cursor-pointer ${
+          selectedDoctor?.id == doctorAgent.id && "border-blue-500"
+        }`}
       onClick={() => setSelectedDoctor(doctorAgent)}
     >
       <Image

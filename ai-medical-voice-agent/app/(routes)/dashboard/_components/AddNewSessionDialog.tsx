@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,7 +22,17 @@ function AddNewSessionDialog() {
   const [note, setNote] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [suggestedDoctors, setSuggestedDoctors] = useState<DoctorAgent[]>();
-  const [SelectedDoctor, SetSelectedDoctor] = useState<DoctorAgent>();
+  const [selectedDoctor, SetSelectedDoctor] = useState<DoctorAgent | null>(
+    null
+  );
+
+  // 👇 Auto-select if only one doctor
+  useEffect(() => {
+    if (suggestedDoctors && suggestedDoctors.length === 1) {
+      SetSelectedDoctor(suggestedDoctors[0]);
+    }
+  }, [suggestedDoctors]);
+
   const OnClickNext = async () => {
     setLoading(true);
     const result = await axios.post("/api/suggest-doctors", {
@@ -34,13 +44,23 @@ function AddNewSessionDialog() {
     setLoading(false);
   };
 
-  const onStartConsultation = () => {
+  const onStartConsultation = async () => {
+    setLoading(true);
     //Save all info to database
+    const result = await axios.post("/api/session-chat", {
+      notes: note,
+      selectedDoctor: selectedDoctor,
+    });
+    console.log(result.data);
+    if (result.data?.sessionId) {
+      console.log("Session Created with ID: ", result.data.sessionId);
+    }
+    setLoading(false);
   };
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button className="mt-3">+ Start a Consultation</Button>
       </DialogTrigger>
       <DialogContent>
@@ -65,6 +85,8 @@ function AddNewSessionDialog() {
                       doctorAgent={doctor}
                       key={index}
                       setSelectedDoctor={() => SetSelectedDoctor(doctor)}
+                      //@ts-ignore
+                      selectedDoctor={selectedDoctor}
                     />
                   ))}
                 </div>
@@ -73,17 +95,21 @@ function AddNewSessionDialog() {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <DialogClose>
+          <DialogClose asChild>
             <Button variant={"outline"}>Cancel</Button>
           </DialogClose>
           {!suggestedDoctors ? (
             <Button disabled={!note || loading} onClick={() => OnClickNext()}>
-              Next{" "}
+              Next {""}
               {loading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
             </Button>
           ) : (
-            <Button onClick={() => onStartConsultation()}>
-              Start Consultation <ArrowRight />
+            <Button
+              disabled={loading || !selectedDoctor}
+              onClick={() => onStartConsultation()}
+            >
+              Start Consultation
+              {loading ? <Loader2 className="animate-spin" /> : <ArrowRight />}
             </Button>
           )}
         </DialogFooter>
