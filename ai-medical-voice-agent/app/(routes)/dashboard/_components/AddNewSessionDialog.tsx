@@ -17,6 +17,7 @@ import axios from "axios";
 import DoctorAgentCard, { DoctorAgent } from "./DoctorAgentCard";
 import SuggestedDoctorCard from "./SuggestedDoctorCard";
 import { on } from "events";
+import { useRouter } from "next/navigation";
 
 function AddNewSessionDialog() {
   const [note, setNote] = useState<string>();
@@ -25,6 +26,7 @@ function AddNewSessionDialog() {
   const [selectedDoctor, SetSelectedDoctor] = useState<DoctorAgent | null>(
     null
   );
+  const router = useRouter();
 
   // 👇 Auto-select if only one doctor
   useEffect(() => {
@@ -54,6 +56,7 @@ function AddNewSessionDialog() {
     console.log(result.data);
     if (result.data?.sessionId) {
       console.log("Session Created with ID: ", result.data.sessionId);
+      router.push("/dashboard/medical-agent/" + result.data.sessionId);
     }
     setLoading(false);
   };
