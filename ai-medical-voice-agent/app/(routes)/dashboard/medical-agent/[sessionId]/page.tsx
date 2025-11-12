@@ -4,16 +4,17 @@ import { useParams } from "next/navigation";
 import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import { DoctorAgent } from "../../_components/DoctorAgentCard";
-import { Circle } from "lucide-react";
+import { Circle, PhoneCall } from "lucide-react";
 import { eq } from "drizzle-orm";
+import { Button } from "@/components/ui/button";
 
 type sessionDetail = {
   id: number;
-  note: string;
-  session_id: string;
+  notes: string;
+  sessionId: string;
   report: JSON;
-  selected_doctors: DoctorAgent;
-  created_on: string;
+  selectedDoctor: DoctorAgent;
+  createdOn: string;
 };
 
 function MedicalVoiceAgent() {
@@ -28,22 +29,38 @@ function MedicalVoiceAgent() {
     console.log(result.data);
     setSessionDetail(result.data);
   };
+
   return (
-    <div>
+    <div className="p-5 border rounded-3xl bg-secondary">
       <div className="flex justify-between items-center">
         <h2 className="p-1 px-2 border rounded-md flex gap-2 items-center">
-          <Circle className="h-4 w-4" /> Not Connected
+          <Circle className="h-4 w-4" /> Not Connected{" "}
         </h2>
+        <h2 className="font-bold text-xl text-gray-400">00:00</h2>
       </div>
-      <h2 className="font-bold text-xl text-gray-400">00:00</h2>
-      {sessionDetail && sessionDetail?.selected_doctors?.image && (
-        <div>
+
+      {sessionDetail && (
+        <div className="flex items-center flex-col mt-10">
           <Image
-            src={sessionDetail.selected_doctors.image}
-            alt={sessionDetail?.selected_doctors?.specialist ?? ""}
-            width={80}
-            height={80}
+            src={sessionDetail?.selectedDoctor?.image || "/doctor1.png"}
+            alt={sessionDetail?.selectedDoctor?.specialist ?? "Doctor"}
+            width={120}
+            height={120}
+            className="h-[100px] w-[100px] object-cover rounded-full"
           />
+          <h2 className="mt-2 text-lg">
+            {sessionDetail?.selectedDoctor?.specialist}
+          </h2>
+          <p className="text-sm text-gray-400">AI Medical Voice Agent</p>
+
+          <div className="mt-32">
+            <h2 className="text-gray-400">Assistant Msg</h2>
+            <h2 className="text-lg">User Msg</h2>
+          </div>
+
+          <Button className="mt-20">
+            <PhoneCall /> Start Call{" "}
+          </Button>
         </div>
       )}
     </div>
