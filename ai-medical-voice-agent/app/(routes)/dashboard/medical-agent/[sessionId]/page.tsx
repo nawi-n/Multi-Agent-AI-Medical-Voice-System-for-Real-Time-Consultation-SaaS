@@ -42,17 +42,34 @@ function MedicalVoiceAgent() {
   };
 
   const StartCall = () => {
+    // Clean up any existing instance first
+    if (vapiInstance) {
+      try {
+        vapiInstance.stop();
+        vapiInstance.removeAllListeners();
+      } catch (error) {
+        console.log("Error cleaning up previous instance:", error);
+      }
+    }
+
     const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY || "");
     setVapiInstance(vapi);
-    vapi.start(process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID || "");
+
     vapi.on("call-start", () => {
       console.log("Call started");
       setCallStarted(true);
     });
+
     vapi.on("call-end", () => {
       console.log("Call ended");
       setCallStarted(false);
     });
+
+    vapi.on("error", (error) => {
+      console.error("Vapi Error:", error);
+      setCallStarted(false);
+    });
+
     vapi.on("message", (message) => {
       if (message.type === "transcript") {
         const { role, transcriptType, transcript } = message;
@@ -70,25 +87,54 @@ function MedicalVoiceAgent() {
         }
       }
     });
-    vapiInstance.on("speech-start", () => {
+
+    vapi.on("speech-start", () => {
       console.log("Assistant started speaking");
       setCurrentRole("assistant");
     });
-    vapiInstance.on("speech-end", () => {
+
+    vapi.on("speech-end", () => {
       console.log("Assistant stopped speaking");
       setCurrentRole("user");
     });
+
+    // Resolve dynamic assistant id based on selected specialist
+    const dynamicAssistantId =
+      sessionDetail?.selectedDoctor?.assistant_id ||
+      sessionDetail?.selectedDoctor?.assistantId ||
+      process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID ||
+      process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID ||
+      "";
+
+    if (!dynamicAssistantId) {
+      console.warn(
+        "No assistant id found: add assistant_id to doctor list or NEXT_PUBLIC_VAPI_ASSISTANT_ID env."
+      );
+      alert(
+        "Missing assistant id for this specialist. Please configure assistant_id in the list or set NEXT_PUBLIC_VAPI_ASSISTANT_ID."
+      );
+      return;
+    }
+
+    console.log("Starting Vapi call with assistant id:", dynamicAssistantId);
+    vapi.start(dynamicAssistantId);
   };
 
   const endCall = () => {
     if (!vapiInstance) return;
-    vapiInstance.stop();
-    vapiInstance.off("call-start");
-    vapiInstance.off("call-end");
-    vapiInstance.off("message");
 
-    setCallStarted(false);
-    setVapiInstance(null);
+    try {
+      vapiInstance.stop();
+      vapiInstance.removeAllListeners();
+      setCallStarted(false);
+      setVapiInstance(null);
+      setLiveTranscript("");
+      setCurrentRole(null);
+    } catch (error) {
+      console.error("Error ending call:", error);
+      setCallStarted(false);
+      setVapiInstance(null);
+    }
   };
 
   return (

@@ -9,6 +9,9 @@ export type DoctorAgent = {
   description: string;
   image: string;
   agentPrompt: string;
+  // Vapi assistant id (snake case from list) or camelCase fallback
+  assistant_id?: string;
+  assistantId?: string; // allow either naming convention
 };
 
 type Props = {
