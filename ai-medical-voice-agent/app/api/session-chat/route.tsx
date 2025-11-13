@@ -2,7 +2,7 @@ import { sessionChatTable } from "@/config/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/config/db";
 import { uuid } from "drizzle-orm/gel-core";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { currentUser } from "@clerk/nextjs/server";
 
@@ -33,10 +33,22 @@ export async function GET(req: NextRequest) {
   const sessionId = searchParams.get("sessionId") || "";
   const user = await currentUser();
 
+  if (sessionId === "all") {
+    const results = await db
+      .select()
+      .from(sessionChatTable)
+      .where(
+        //@ts-ignore
+        eq(sessionChatTable.createdBy, user?.primaryEmailAddress?.emailAddress)
+      )
+      .orderBy(desc(sessionChatTable.id));
+
+    return NextResponse.json(results);
+  }
+
   const result = await db
     .select()
     .from(sessionChatTable)
-    //@ts-ignore
     .where(eq(sessionChatTable.sessionId, sessionId));
 
   return NextResponse.json(result[0]);
