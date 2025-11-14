@@ -33,7 +33,7 @@ function HistoryTable({ historyList }: Props) {
         </TableHeader>
         <TableBody>
           {historyList.map((record: sessionDetail, index: number) => (
-            <TableRow>
+            <TableRow key={record.id ?? record.sessionId ?? index}>
               <TableCell className="font-medium">
                 {record.selectedDoctor?.specialist}
               </TableCell>
