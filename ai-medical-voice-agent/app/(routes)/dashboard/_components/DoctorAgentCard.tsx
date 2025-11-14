@@ -51,7 +51,7 @@ function DoctorAgentCard({ doctorAgent }: Props) {
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-2xl hover:border-blue-300 hover:-translate-y-1">
+    <div className="group relative h-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-2xl hover:border-blue-300 hover:-translate-y-1 flex flex-col">
       {/* Premium Badge */}
       {doctorAgent.subscriptionRequired && (
         <div className="absolute top-3 right-3 z-10">
@@ -62,7 +62,7 @@ function DoctorAgentCard({ doctorAgent }: Props) {
       )}
 
       {/* Doctor Image with Gradient Overlay */}
-      <div className="relative h-[250px] w-full overflow-hidden">
+      <div className="relative h-[160px] sm:h-[220px] md:h-[250px] w-full overflow-hidden">
         <Image
           src={doctorAgent.image}
           alt={doctorAgent.specialist}
@@ -74,31 +74,33 @@ function DoctorAgentCard({ doctorAgent }: Props) {
       </div>
 
       {/* Content */}
-      <div className="p-5">
-        <h2 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+      <div className="flex-1 flex flex-col p-4 sm:p-5">
+        <h2 className="text-base sm:text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
           {doctorAgent.specialist}
         </h2>
         <p className="mt-2 line-clamp-2 text-sm text-gray-600">
           {doctorAgent.description}
         </p>
 
-        <Button
-          className="mt-4 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-semibold shadow-md transition-all duration-300 hover:shadow-lg disabled:from-gray-400 disabled:to-gray-500"
-          onClick={onStartConsultation}
-          disabled={!paidUser && doctorAgent.subscriptionRequired}
-        >
-          {loading ? (
-            <>
-              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-              Starting...
-            </>
-          ) : (
-            <>
-              Start Consultation
-              <IconArrowRight className="ml-2 h-4 w-4" />
-            </>
-          )}
-        </Button>
+        <div className="mt-auto pt-3">
+          <Button
+            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-semibold shadow-md transition-all duration-300 hover:shadow-lg disabled:from-gray-400 disabled:to-gray-500 text-sm sm:text-base whitespace-normal break-words text-center leading-snug h-auto min-h-10 sm:min-h-11 py-2"
+            onClick={onStartConsultation}
+            disabled={!paidUser && doctorAgent.subscriptionRequired}
+          >
+            {loading ? (
+              <>
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                Starting...
+              </>
+            ) : (
+              <>
+                Consult Now
+                <IconArrowRight className="ml-2 h-4 w-4 hidden sm:inline-block" />
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
