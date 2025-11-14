@@ -9,20 +9,37 @@ import { sessionDetail } from "../medical-agent/[sessionId]/page";
 
 function HistoryList() {
   const [historyList, setHistoryList] = useState<sessionDetail[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     GetHistoryList();
   }, []);
 
   const GetHistoryList = async () => {
-    const result = await axios.get("/api/session-chat?sessionId=all");
-    console.log(result.data);
-    setHistoryList(result.data);
+    try {
+      setLoading(true);
+      const result = await axios.get("/api/session-chat?sessionId=all");
+      console.log(result.data);
+      setHistoryList(result.data);
+    } catch (e) {
+      console.error("Failed to load history:", e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="mt-10">
-      {historyList.length === 0 ? (
+      {loading ? (
+        <div className="w-full rounded-2xl border p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-5 w-56 rounded bg-gray-200" />
+            <div className="h-10 w-full rounded bg-gray-100" />
+            <div className="h-10 w-full rounded bg-gray-100" />
+            <div className="h-10 w-3/5 rounded bg-gray-100" />
+          </div>
+        </div>
+      ) : historyList.length === 0 ? (
         <div className="flex items-center flex-col justify-center p-7 border-dashed rounded-2xl border-2">
           <Image
             src={"/medical-assistance.png"}
