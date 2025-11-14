@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
           email: user?.primaryEmailAddress?.emailAddress || "No Email",
           credits: 10,
           //@ts-ignore
-        })
+        }) //@ts-ignore
         .returning({ usersTable });
       return NextResponse.json(result[0]?.usersTable);
     }

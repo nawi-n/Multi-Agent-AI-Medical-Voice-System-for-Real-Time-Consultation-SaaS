@@ -20,6 +20,7 @@ import { on } from "events";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { sessionDetail } from "../medical-agent/[sessionId]/page";
+import { toast } from "sonner";
 
 function AddNewSessionDialog() {
   const [note, setNote] = useState<string>();
@@ -78,16 +79,80 @@ function AddNewSessionDialog() {
     setLoading(false);
   };
 
+  const hasReachedLimit = !paidUser && historyList?.length >= 1;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          className="mt-3"
-          disabled={!paidUser && historyList?.length >= 1}
+          aria-disabled={hasReachedLimit}
+          className={`mt-3 ${
+            hasReachedLimit ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          // block mouse activation before it reaches DialogTrigger
+          onMouseDown={(e) => {
+            if (hasReachedLimit) {
+              e.preventDefault();
+              e.stopPropagation();
+              // stopImmediatePropagation exists on the native DOM event, call it there
+              (e.nativeEvent as Event).stopImmediatePropagation();
+            }
+          }}
+          // block click fallback
+          onClick={(e) => {
+            if (hasReachedLimit) {
+              e.preventDefault();
+              e.stopPropagation();
+              // stopImmediatePropagation exists on the native DOM event, call it there
+              (e.nativeEvent as Event).stopImmediatePropagation();
+              toast.custom(() => (
+                <div className="max-w-md px-4 py-3 rounded-lg shadow-lg bg-gray-800 text-white flex items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="font-bold text-sm">
+                      Subscribe to continue
+                    </div>
+                    <div className="text-sm text-white/90 mt-1">
+                      You have used your free consultation. Upgrade to continue.
+                    </div>
+                  </div>
+
+                  <div className="flex-shrink-0">
+                    <button
+                      onClick={() => {
+                        router.push("/dashboard/billing");
+                      }}
+                      className="bg-white text-black font-semibold px-3 py-1.5 rounded-md shadow-sm"
+                    >
+                      View Billing
+                    </button>
+                  </div>
+                </div>
+              ));
+
+              return;
+            }
+            // otherwise let DialogTrigger handle opening
+          }}
+          // block keyboard activation (Enter/Space)
+          onKeyDown={(e) => {
+            if (hasReachedLimit && (e.key === "Enter" || e.key === " ")) {
+              e.preventDefault();
+              e.stopPropagation();
+              // stopImmediatePropagation exists on the native DOM event, call it there
+              (e.nativeEvent as Event).stopImmediatePropagation();
+              toast("Subscribe to continue", {
+                description:
+                  "You have used your free consultation. Upgrade to continue.",
+                className: "text-white bg-black", // ← Title text color + background
+                descriptionClassName: "text-gray-200", // ← Description color
+              });
+            }
+          }}
         >
           + Start a Consultation
         </Button>
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Basic Details</DialogTitle>

@@ -1,10 +1,14 @@
 "use client";
-import React from "react";
+import React, { use, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { IconArrowRight } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@clerk/nextjs";
+import axios from "axios";
+import router from "next/dist/shared/lib/router/router";
+import { useRouter } from "next/navigation";
+import { Loader2Icon } from "lucide-react";
 
 export type DoctorAgent = {
   id: number;
@@ -23,10 +27,28 @@ type Props = {
 };
 
 function DoctorAgentCard({ doctorAgent }: Props) {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const { has } = useAuth();
   //@ts-ignore
   const paidUser = has && has({ plan: "pro" });
   console.log("Paid User:", paidUser);
+
+  const onStartConsultation = async () => {
+    setLoading(true);
+    //Save all info to database
+    const result = await axios.post("/api/session-chat", {
+      notes: "New Consultation",
+      selectedDoctor: doctorAgent,
+    });
+    console.log(result.data);
+    if (result.data?.sessionId) {
+      console.log("Session Created with ID: ", result.data.sessionId);
+      router.push("/dashboard/medical-agent/" + result.data.sessionId);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="relative">
@@ -46,10 +68,15 @@ function DoctorAgentCard({ doctorAgent }: Props) {
       </p>
       <Button
         className="w-full mt-2"
+        onClick={onStartConsultation}
         disabled={!paidUser && doctorAgent.subscriptionRequired}
       >
-        Start Consultaation
-        <IconArrowRight />
+        Start Consultaation{" "}
+        {loading ? (
+          <Loader2Icon className="animate-spin" />
+        ) : (
+          <IconArrowRight />
+        )}
       </Button>
     </div>
   );
