@@ -18,6 +18,8 @@ import DoctorAgentCard, { DoctorAgent } from "./DoctorAgentCard";
 import SuggestedDoctorCard from "./SuggestedDoctorCard";
 import { on } from "events";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import { sessionDetail } from "../medical-agent/[sessionId]/page";
 
 function AddNewSessionDialog() {
   const [note, setNote] = useState<string>();
@@ -27,6 +29,7 @@ function AddNewSessionDialog() {
     null
   );
   const router = useRouter();
+  const [historyList, setHistoryList] = useState<sessionDetail[]>([]);
 
   // 👇 Auto-select if only one doctor
   useEffect(() => {
@@ -34,6 +37,20 @@ function AddNewSessionDialog() {
       SetSelectedDoctor(suggestedDoctors[0]);
     }
   }, [suggestedDoctors]);
+
+  const { has } = useAuth();
+  //@ts-ignore
+  const paidUser = has && has({ plan: "pro" });
+
+  useEffect(() => {
+    GetHistoryList();
+  }, []);
+
+  const GetHistoryList = async () => {
+    const result = await axios.get("/api/session-chat?sessionId=all");
+    console.log(result.data);
+    setHistoryList(result.data);
+  };
 
   const OnClickNext = async () => {
     setLoading(true);
@@ -64,7 +81,12 @@ function AddNewSessionDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="mt-3">+ Start a Consultation</Button>
+        <Button
+          className="mt-3"
+          disabled={!paidUser && historyList?.length >= 1}
+        >
+          + Start a Consultation
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
