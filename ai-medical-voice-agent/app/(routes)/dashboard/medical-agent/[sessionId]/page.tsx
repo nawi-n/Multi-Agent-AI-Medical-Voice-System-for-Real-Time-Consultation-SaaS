@@ -192,130 +192,214 @@ function MedicalVoiceAgent() {
   };
 
   return (
-    <div className="p-5 border rounded-3xl bg-secondary">
-      <div className="flex justify-between items-center">
-        <h2 className="p-1 px-2 border rounded-md flex gap-2 items-center">
-          <Circle
-            className={
-              "h-4 w-4 rounded-full" +
-              (callStarted ? " bg-green-500" : " bg-red-500")
-            }
-          />{" "}
-          {callStarted ? "Connected..." : "Not Connected"}
-        </h2>
-        {/*
-        <h2 className="font-bold text-xl text-gray-400">
-          {formatTime(elapsedSeconds)}
-        </h2>
-        */}
-      </div>
-
-      {sessionDetail && (
-        <div className="flex items-center flex-col mt-10">
-          <Image
-            src={sessionDetail?.selectedDoctor?.image || "/doctor1.png"}
-            alt={sessionDetail?.selectedDoctor?.specialist ?? "Doctor"}
-            width={120}
-            height={120}
-            className="h-[100px] w-[100px] object-cover rounded-full"
-          />
-          <h2 className="mt-2 text-lg">
-            {sessionDetail?.selectedDoctor?.specialist}
-          </h2>
-          <p className="text-sm text-gray-400">AI Medical Voice Agent</p>
-
-          {/* ---------- Call Visual Indicator (no transcript) ---------- */}
-          <div className="mt-12 mb-5 w-full flex flex-col items-center">
-            {/* floating status card */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 md:p-8">
+      <div className="mx-auto max-w-4xl">
+        {/* Call Status Header */}
+        <div className="mb-6 flex items-center justify-between rounded-2xl border border-gray-200 bg-white px-6 py-4 shadow-sm">
+          <div className="flex items-center gap-3">
             <div
-              className={`w-full max-w-lg rounded-xl px-6 py-6 shadow-sm bg-white/60 backdrop-blur-sm border ${
-                callStarted ? "border-green-100" : "border-gray-100"
-              } transition-transform duration-300`}
+              className={`relative flex h-10 w-10 items-center justify-center rounded-full ${
+                callStarted
+                  ? "bg-gradient-to-br from-green-100 to-emerald-100"
+                  : "bg-gradient-to-br from-gray-100 to-gray-200"
+              }`}
             >
-              {/* Row: small dot + call state text */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span
-                    aria-hidden
-                    className={`inline-block h-3 w-3 rounded-full ${
-                      callStarted ? "bg-green-500" : "bg-gray-400"
-                    }`}
-                  />
-                  <div>
-                    <div className="text-sm font-medium text-gray-700">
-                      {callStarted ? "Call in progress" : "Not connected"}
+              <Circle
+                className={`h-5 w-5 ${
+                  callStarted
+                    ? "fill-green-500 text-green-500"
+                    : "fill-gray-400 text-gray-400"
+                }`}
+              />
+              {callStarted && (
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
+                </span>
+              )}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-900">
+                {callStarted ? "Connected" : "Not Connected"}
+              </p>
+              <p className="text-xs text-gray-500">
+                {callStarted ? "Call in progress" : "Ready to connect"}
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-gray-500">Duration</p>
+            <p className="font-mono text-lg font-bold text-gray-900">
+              {formatTime(elapsedSeconds)}
+            </p>
+          </div>
+        </div>
+
+        {sessionDetail && (
+          <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-lg md:p-12">
+            {/* Doctor Profile */}
+            <div className="flex flex-col items-center">
+              <div className="relative">
+                <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 blur-xl opacity-30"></div>
+                <Image
+                  src={sessionDetail?.selectedDoctor?.image || "/doctor1.png"}
+                  alt={sessionDetail?.selectedDoctor?.specialist ?? "Doctor"}
+                  width={140}
+                  height={140}
+                  className="relative h-[140px] w-[140px] rounded-full border-4 border-white object-cover shadow-xl"
+                />
+                <div
+                  className={`absolute bottom-2 right-2 h-6 w-6 rounded-full border-4 border-white ${
+                    callStarted ? "bg-green-500" : "bg-gray-400"
+                  }`}
+                ></div>
+              </div>
+
+              <h2 className="mt-6 text-2xl font-bold text-gray-900">
+                {sessionDetail?.selectedDoctor?.specialist}
+              </h2>
+              <p className="mt-1 text-sm font-medium text-gray-600">
+                AI Medical Voice Assistant
+              </p>
+
+              {/* Call Status Card */}
+              <div className="mt-8 w-full max-w-2xl">
+                <div
+                  className={`relative overflow-hidden rounded-2xl border-2 ${
+                    callStarted
+                      ? "border-green-200 bg-gradient-to-br from-green-50 to-emerald-50"
+                      : "border-gray-200 bg-gradient-to-br from-gray-50 to-white"
+                  } p-6 shadow-md transition-all duration-300`}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`h-3 w-3 rounded-full ${
+                          callStarted
+                            ? "bg-green-500 animate-pulse"
+                            : "bg-gray-400"
+                        }`}
+                      ></div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {callStarted ? "Call Active" : "Standby Mode"}
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          {callStarted
+                            ? "AI assistant is listening and responding"
+                            : "Press the button below to start consultation"}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-xs text-gray-400">
-                      {callStarted
-                        ? "Your AI assistant is online."
-                        : "Press Start Call to connect."}
+                    <div className="rounded-lg bg-white px-3 py-1.5 shadow-sm">
+                      <p className="font-mono text-sm font-bold text-gray-700">
+                        {formatTime(elapsedSeconds)}
+                      </p>
                     </div>
                   </div>
-                </div>
 
-                {/* call progress timer */}
-                <div className="text-sm font-medium text-gray-400">
-                  {formatTime(elapsedSeconds)}
+                  {/* Speaking Indicator */}
+                  <div className="flex min-h-[60px] items-center justify-center">
+                    {currentRole === "assistant" ? (
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-end gap-1.5">
+                          {[0, 0.15, 0.3, 0.15, 0].map((delay, i) => (
+                            <div
+                              key={i}
+                              className="w-1.5 rounded-full bg-gradient-to-t from-blue-600 to-indigo-600 animate-pulse"
+                              style={{
+                                height: `${20 + Math.random() * 20}px`,
+                                animationDelay: `${delay}s`,
+                                animationDuration: "0.6s",
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-blue-600">
+                            Assistant Speaking
+                          </p>
+                          <p className="text-xs text-blue-500">
+                            Analyzing and responding...
+                          </p>
+                        </div>
+                      </div>
+                    ) : callStarted ? (
+                      <div className="flex items-center gap-3">
+                        <div className="relative flex h-8 w-8 items-center justify-center">
+                          <div className="absolute h-8 w-8 animate-ping rounded-full bg-blue-400 opacity-20"></div>
+                          <div className="h-4 w-4 rounded-full bg-blue-500"></div>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">
+                            Listening...
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Speak naturally, I'm here to help
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <p className="text-sm text-gray-500">
+                          Start the call to begin your consultation
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* speaking indicator — moves slightly when assistant speaks */}
-              <div
-                className={`mt-5 flex items-center justify-center gap-3 transition-transform duration-300 ${
-                  currentRole === "assistant"
-                    ? "translate-y-3"
-                    : "translate-y-0"
-                }`}
-              >
-                {currentRole === "assistant" ? (
-                  // assistant speaking: animated bars + label
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-end gap-1">
-                      <div
-                        className="h-3 w-1 rounded bg-[#0b62c8] animate-pulse"
-                        style={{ animationDelay: "0s" }}
-                      />
-                      <div
-                        className="h-4 w-1 rounded bg-[#0b62c8] animate-pulse"
-                        style={{ animationDelay: "0.15s" }}
-                      />
-                      <div
-                        className="h-2 w-1 rounded bg-[#0b62c8] animate-pulse"
-                        style={{ animationDelay: "0.3s" }}
-                      />
-                    </div>
-                    <div className="text-sm font-medium text-[#0b62c8]">
-                      Assistant speaking...
-                    </div>
-                  </div>
+              {/* Action Buttons */}
+              <div className="mt-8 flex gap-4">
+                {!callStarted ? (
+                  <Button
+                    size="lg"
+                    className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
+                    onClick={StartCall}
+                    disabled={loading}
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      {loading ? (
+                        <>
+                          <Loader className="h-5 w-5 animate-spin" />
+                          Connecting...
+                        </>
+                      ) : (
+                        <>
+                          <PhoneCall className="h-5 w-5" />
+                          Start Consultation
+                        </>
+                      )}
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  </Button>
                 ) : (
-                  // listening state: small pulsing dot + label
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-gray-300 animate-pulse" />
-                    <div className="text-sm text-gray-500">Listening…</div>
-                  </div>
+                  <Button
+                    size="lg"
+                    variant="destructive"
+                    className="rounded-xl px-8 py-6 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
+                    onClick={endCall}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader className="mr-2 h-5 w-5 animate-spin" />
+                        Ending...
+                      </>
+                    ) : (
+                      <>
+                        <PhoneOff className="mr-2 h-5 w-5" />
+                        End Call
+                      </>
+                    )}
+                  </Button>
                 )}
               </div>
             </div>
           </div>
-
-          {!callStarted ? (
-            <Button className="mt-20" onClick={StartCall} disabled={loading}>
-              {loading ? <Loader className="animate-spin" /> : <PhoneCall />}{" "}
-              Start Call
-            </Button>
-          ) : (
-            <Button
-              variant={"destructive"}
-              onClick={endCall}
-              disabled={loading}
-            >
-              {loading ? <Loader className="animate-spin" /> : <PhoneOff />}{" "}
-              Disconnect
-            </Button>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

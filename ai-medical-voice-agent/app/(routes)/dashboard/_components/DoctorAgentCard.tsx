@@ -51,33 +51,55 @@ function DoctorAgentCard({ doctorAgent }: Props) {
   };
 
   return (
-    <div className="relative">
+    <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-2xl hover:border-blue-300 hover:-translate-y-1">
+      {/* Premium Badge */}
       {doctorAgent.subscriptionRequired && (
-        <Badge className="absolute m-2 right-0">Premium</Badge>
+        <div className="absolute top-3 right-3 z-10">
+          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 shadow-lg">
+            ⭐ Premium
+          </Badge>
+        </div>
       )}
-      <Image
-        src={doctorAgent.image}
-        alt={doctorAgent.specialist}
-        width={200}
-        height={300}
-        className="w-full h-[250px] object-cover rounded-xl"
-      />
-      <h2 className="font-bold mt-1">{doctorAgent.specialist}</h2>
-      <p className="line-clamp-2 text-sm text-gray-500 ">
-        {doctorAgent.description}
-      </p>
-      <Button
-        className="w-full mt-2"
-        onClick={onStartConsultation}
-        disabled={!paidUser && doctorAgent.subscriptionRequired}
-      >
-        Start Consultaation{" "}
-        {loading ? (
-          <Loader2Icon className="animate-spin" />
-        ) : (
-          <IconArrowRight />
-        )}
-      </Button>
+
+      {/* Doctor Image with Gradient Overlay */}
+      <div className="relative h-[250px] w-full overflow-hidden">
+        <Image
+          src={doctorAgent.image}
+          alt={doctorAgent.specialist}
+          width={200}
+          height={300}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      </div>
+
+      {/* Content */}
+      <div className="p-5">
+        <h2 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+          {doctorAgent.specialist}
+        </h2>
+        <p className="mt-2 line-clamp-2 text-sm text-gray-600">
+          {doctorAgent.description}
+        </p>
+
+        <Button
+          className="mt-4 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 font-semibold shadow-md transition-all duration-300 hover:shadow-lg disabled:from-gray-400 disabled:to-gray-500"
+          onClick={onStartConsultation}
+          disabled={!paidUser && doctorAgent.subscriptionRequired}
+        >
+          {loading ? (
+            <>
+              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              Starting...
+            </>
+          ) : (
+            <>
+              Start Consultation
+              <IconArrowRight className="ml-2 h-4 w-4" />
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
