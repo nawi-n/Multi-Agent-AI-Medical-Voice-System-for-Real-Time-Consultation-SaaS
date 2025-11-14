@@ -42,7 +42,8 @@ function HistoryTable({ historyList, totalCount }: Props) {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Desktop/Table view */}
+      <div className="hidden sm:block overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent border-gray-100">
@@ -108,6 +109,54 @@ function HistoryTable({ historyList, totalCount }: Props) {
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Mobile/Card view */}
+      <div className="sm:hidden p-4">
+        <div className="grid grid-cols-1 gap-4">
+          {historyList.map((record: sessionDetail, index: number) => (
+            <div
+              key={record.id ?? record.sessionId ?? index}
+              className="rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                  <span className="text-sm font-bold text-blue-600">
+                    {record.selectedDoctor?.specialist?.charAt(0)}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-gray-900">
+                      {record.selectedDoctor?.specialist}
+                    </p>
+                    {record.selectedDoctor?.subscriptionRequired && (
+                      <Badge variant="secondary" className="text-[10px]">
+                        Premium
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500 flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {moment(new Date(record.createdOn)).format(
+                      "MMM D, YYYY"
+                    )} • {moment(new Date(record.createdOn)).fromNow()}
+                  </p>
+                </div>
+              </div>
+
+              {record.notes && (
+                <p className="mt-3 text-sm text-gray-600 line-clamp-2">
+                  {record.notes}
+                </p>
+              )}
+
+              <div className="mt-4">
+                <ViewReportDialog record={record} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {historyList.length === 0 && (

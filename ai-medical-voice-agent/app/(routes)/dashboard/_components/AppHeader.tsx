@@ -22,27 +22,27 @@ function AppHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-sm">
-      <div className="flex items-center justify-between px-4 py-3 md:px-10 lg:px-16">
+      <div className="flex items-center justify-between px-4 py-4 md:px-10 lg:px-16">
         {/* Logo (smaller) */}
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo.png"
             alt="DocNow logo"
-            width={88} // slightly smaller
-            height={48}
+            width={112}
+            height={56}
             className="object-contain"
             priority
           />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-8">
           {menuOptions.map((option) => {
             const isActive = pathname === option.path;
             return (
               <Link key={option.id} href={option.path}>
                 <span
-                  className={`relative cursor-pointer text-sm font-medium transition-colors ${
+                  className={`relative cursor-pointer text-base font-semibold transition-colors ${
                     isActive
                       ? "text-blue-600"
                       : "text-gray-700 hover:text-blue-600"
@@ -50,7 +50,7 @@ function AppHeader() {
                 >
                   {option.name}
                   {isActive && (
-                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full" />
+                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full" />
                   )}
                 </span>
               </Link>
@@ -59,10 +59,10 @@ function AppHeader() {
         </nav>
 
         {/* Right Section */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {!user ? (
             <Link href="/sign-in">
-              <button className="hidden md:inline-flex items-center rounded-md bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-lg">
+              <button className="hidden md:inline-flex items-center rounded-md bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-base font-semibold text-white shadow-sm hover:shadow-lg">
                 Sign In
               </button>
             </Link>
@@ -72,7 +72,7 @@ function AppHeader() {
                 appearance={{
                   elements: {
                     avatarBox:
-                      "w-10 h-10 rounded-full border-2 border-white shadow-sm",
+                      "w-11 h-11 rounded-full border-2 border-white shadow-sm",
                   },
                 }}
               />
@@ -86,9 +86,9 @@ function AppHeader() {
             aria-label="Open menu"
           >
             {mobileMenuOpen ? (
-              <X className="h-5 w-5 text-gray-700" />
+              <X className="h-6 w-6 text-gray-700" />
             ) : (
-              <Menu className="h-5 w-5 text-gray-700" />
+              <Menu className="h-6 w-6 text-gray-700" />
             )}
           </button>
         </div>
@@ -96,7 +96,7 @@ function AppHeader() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white px-4 py-3">
+        <div className="md:hidden border-t border-gray-200 bg-white px-4 py-4">
           <nav className="flex flex-col gap-2">
             {menuOptions.map((option) => {
               const isActive = pathname === option.path;
@@ -107,7 +107,7 @@ function AppHeader() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <span
-                    className={`block rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`block rounded-md px-3 py-2.5 text-base font-semibold transition-colors ${
                       isActive
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-700 hover:bg-gray-50"
