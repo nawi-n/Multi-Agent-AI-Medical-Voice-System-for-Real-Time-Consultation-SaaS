@@ -33,7 +33,7 @@ function MedicalVoiceAgent() {
   const { sessionId } = useParams();
   const [sessionDetail, setSessionDetail] = useState<sessionDetail>();
   const [callStarted, setCallStarted] = useState(false);
-  const [vapiInstance, setVapiInstance] = useState<typeof Vapi | null>(null);
+  const [vapiInstance, setVapiInstance] = useState<Vapi | null>(null);
   const [currentRole, setCurrentRole] = useState<string | null>();
   const router = useRouter();
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
