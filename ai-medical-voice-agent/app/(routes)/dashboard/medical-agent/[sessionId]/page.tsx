@@ -35,6 +35,9 @@ function MedicalVoiceAgent() {
   const [callStarted, setCallStarted] = useState(false);
   const [vapiInstance, setVapiInstance] = useState<Vapi | null>(null);
   const [currentRole, setCurrentRole] = useState<string | null>();
+  const [_liveTranscript, setLiveTranscript] = useState<string>("");
+  const [_messages, setMessages] = useState<message[]>([]);
+  const [loading, _setLoading] = useState(false);
   const router = useRouter();
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const timerRef = useRef<number | null>(null);
