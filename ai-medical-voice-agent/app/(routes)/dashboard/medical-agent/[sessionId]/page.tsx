@@ -21,7 +21,7 @@ export type sessionDetail = {
   symptoms?: string[];
   duration?: string;
   severity?: string;
-  conversation?: any;
+  conversation?: unknown;
 };
 
 type message = {
@@ -33,10 +33,11 @@ function MedicalVoiceAgent() {
   const { sessionId } = useParams();
   const [sessionDetail, setSessionDetail] = useState<sessionDetail>();
   const [callStarted, setCallStarted] = useState(false);
-  const [vapiInstance, setVapiInstance] = useState<typeof Vapi | null>(null);
+  const [vapiInstance, setVapiInstance] = useState<Vapi | null>(null);
   const [currentRole, setCurrentRole] = useState<string | null>();
-  const [liveTranscript, setLiveTranscript] = useState<string>();
-  const [messages, setMessages] = useState<message[]>([]);
+  const [_liveTranscript, setLiveTranscript] = useState<string>("");
+  const [_messages, setMessages] = useState<message[]>([]);
+  const [loading, _setLoading] = useState(false);
   const router = useRouter();
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const timerRef = useRef<number | null>(null);
@@ -85,11 +86,6 @@ function MedicalVoiceAgent() {
       }
     };
   }, [callStarted]);
-  const GetSessionDetails = async () => {
-    const result = await axios.get("/api/session-chat?sessionId=" + sessionId);
-    console.log(result.data);
-    setSessionDetail(result.data);
-  };
 
   const StartCall = () => {
     // Clean up any existing instance first

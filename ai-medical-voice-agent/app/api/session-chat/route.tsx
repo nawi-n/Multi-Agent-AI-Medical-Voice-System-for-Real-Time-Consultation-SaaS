@@ -13,7 +13,6 @@ export async function POST(req: NextRequest) {
     const result = await db
       .insert(sessionChatTable)
       .values({
-        // @ts-expect-error - sessionId type mismatch handled by DB
         sessionId: sessionId,
         createdBy: user?.primaryEmailAddress?.emailAddress,
         notes: notes,
