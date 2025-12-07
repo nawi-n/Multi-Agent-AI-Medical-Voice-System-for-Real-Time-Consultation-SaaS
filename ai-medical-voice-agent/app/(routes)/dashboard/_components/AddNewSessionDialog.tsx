@@ -55,12 +55,23 @@ function AddNewSessionDialog() {
 
   const OnClickNext = async () => {
     setLoading(true);
-    const result = await axios.post("/api/suggest-doctors", {
-      notes: note,
-    });
+    try {
+      const result = await axios.post("/api/suggest-doctors", {
+        notes: note,
+      });
 
-    console.log(result.data);
-    setSuggestedDoctors(result.data);
+      console.log(result.data);
+      // Ensure the response is an array
+      if (Array.isArray(result.data)) {
+        setSuggestedDoctors(result.data);
+      } else {
+        console.error("Invalid response format:", result.data);
+        toast.error("Failed to get doctor suggestions. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error fetching doctors:", error);
+      toast.error("Failed to get doctor suggestions. Please try again.");
+    }
     setLoading(false);
   };
 
@@ -170,15 +181,17 @@ function AddNewSessionDialog() {
               <div>
                 <h2>Select the Doctor</h2>
                 <div className="grid grid-cols-2 gap-5">
-                  {suggestedDoctors.map((doctor, index) => (
-                    <SuggestedDoctorCard
-                      doctorAgent={doctor}
-                      key={index}
-                      setSelectedDoctor={() => SetSelectedDoctor(doctor)}
-                      //@ts-ignore
-                      selectedDoctor={selectedDoctor}
-                    />
-                  ))}
+                  {suggestedDoctors &&
+                    Array.isArray(suggestedDoctors) &&
+                    suggestedDoctors.map((doctor, index) => (
+                      <SuggestedDoctorCard
+                        doctorAgent={doctor}
+                        key={index}
+                        setSelectedDoctor={() => SetSelectedDoctor(doctor)}
+                        //@ts-ignore
+                        selectedDoctor={selectedDoctor}
+                      />
+                    ))}
                 </div>
               </div>
             )}
