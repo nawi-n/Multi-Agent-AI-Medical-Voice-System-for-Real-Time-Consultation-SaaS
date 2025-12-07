@@ -1,11 +1,10 @@
 "use client";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { DoctorAgent } from "../../_components/DoctorAgentCard";
-import { Circle, Loader, PhoneCall, PhoneOff, Slice } from "lucide-react";
-import { eq } from "drizzle-orm";
+import { Circle, Loader, PhoneCall, PhoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Vapi from "@vapi-ai/web";
 import { toast } from "sonner";
@@ -34,11 +33,10 @@ function MedicalVoiceAgent() {
   const { sessionId } = useParams();
   const [sessionDetail, setSessionDetail] = useState<sessionDetail>();
   const [callStarted, setCallStarted] = useState(false);
-  const [vapiInstance, setVapiInstance] = useState<any>();
+  const [vapiInstance, setVapiInstance] = useState<typeof Vapi | null>(null);
   const [currentRole, setCurrentRole] = useState<string | null>();
   const [liveTranscript, setLiveTranscript] = useState<string>();
   const [messages, setMessages] = useState<message[]>([]);
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const timerRef = useRef<number | null>(null);
@@ -53,8 +51,17 @@ function MedicalVoiceAgent() {
       : `${two(mins)}:${two(secs)}`;
   };
 
+  const GetSessionDetails = async () => {
+    const result = await axios.get("/api/session-chat?sessionId=" + sessionId);
+    console.log(result.data);
+    setSessionDetail(result.data);
+  };
+
   useEffect(() => {
-    sessionId && GetSessionDetails();
+    if (sessionId) {
+      GetSessionDetails();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
   useEffect(() => {
@@ -121,7 +128,7 @@ function MedicalVoiceAgent() {
           setLiveTranscript(transcript);
           setCurrentRole(role);
         } else if (transcriptType === "final") {
-          setMessages((prevMessages: any) => [
+          setMessages((prevMessages: message[]) => [
             ...prevMessages,
             { role: role, text: transcript },
           ]);
@@ -180,15 +187,6 @@ function MedicalVoiceAgent() {
     }
     toast.success("Your report generated.");
     router.replace("/dashboard");
-  };
-
-  const GenerateReport = async () => {
-    const result = await axios.post("/api/medical-report", {
-      sessionId: sessionId,
-      messages: messages,
-      sessionDetail: sessionDetail,
-    });
-    console.log("Report generated:", result.data);
   };
 
   return (
@@ -335,7 +333,7 @@ function MedicalVoiceAgent() {
                             Listening...
                           </p>
                           <p className="text-xs text-gray-500">
-                            Speak naturally, I'm here to help
+                            Speak naturally, I&apos;m here to help
                           </p>
                         </div>
                       </div>

@@ -14,9 +14,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, Loader2 } from "lucide-react";
 import axios from "axios";
-import DoctorAgentCard, { DoctorAgent } from "./DoctorAgentCard";
+import { DoctorAgent } from "./DoctorAgentCard";
 import SuggestedDoctorCard from "./SuggestedDoctorCard";
-import { on } from "events";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { sessionDetail } from "../medical-agent/[sessionId]/page";
@@ -40,7 +39,6 @@ function AddNewSessionDialog() {
   }, [suggestedDoctors]);
 
   const { has } = useAuth();
-  //@ts-ignore
   const paidUser = has && has({ plan: "pro" });
 
   useEffect(() => {
@@ -188,8 +186,7 @@ function AddNewSessionDialog() {
                         doctorAgent={doctor}
                         key={index}
                         setSelectedDoctor={() => SetSelectedDoctor(doctor)}
-                        //@ts-ignore
-                        selectedDoctor={selectedDoctor}
+                        selectedDoctor={selectedDoctor ?? undefined}
                       />
                     ))}
                 </div>

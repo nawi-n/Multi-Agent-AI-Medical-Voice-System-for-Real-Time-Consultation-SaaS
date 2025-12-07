@@ -2,16 +2,14 @@ import React from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { sessionDetail } from "../medical-agent/[sessionId]/page";
-import { Button } from "@/components/ui/button";
 import moment from "moment";
-import { Clock, Eye, FileText } from "lucide-react";
+import { Clock, FileText } from "lucide-react";
 import ViewReportDialog from "./ViewReportDialog";
 import { Badge } from "@/components/ui/badge";
 

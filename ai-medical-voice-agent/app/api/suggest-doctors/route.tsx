@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       ],
     });
     const rawResp = completion.choices[0].message;
-    //@ts-ignore
+    // @ts-expect-error - content might be null but we handle it
     const Resp = rawResp.content
       .trim()
       .replace("```json", "")

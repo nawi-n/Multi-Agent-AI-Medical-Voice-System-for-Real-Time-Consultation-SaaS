@@ -4,8 +4,8 @@ import Image from "next/image";
 
 type Props = {
   doctorAgent: DoctorAgent;
-  setSelectedDoctor: any;
-  selectedDoctor: DoctorAgent;
+  setSelectedDoctor: (doctor: DoctorAgent) => void;
+  selectedDoctor?: DoctorAgent;
 };
 
 function SuggestedDoctorCard({
