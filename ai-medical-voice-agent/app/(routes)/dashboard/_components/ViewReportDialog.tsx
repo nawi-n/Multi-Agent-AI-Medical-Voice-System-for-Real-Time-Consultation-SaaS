@@ -83,7 +83,7 @@ export default function ViewReportDialog({ record }: Props) {
                 <div>
                   <p className="font-semibold text-gray-700">Date</p>
                   <p className="text-gray-600">
-                    {moment(record.createdOn).format("MMM D, YYYY")}
+                    {moment(new Date(record.createdOn)).format("MMM D, YYYY")}
                   </p>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export default function ViewReportDialog({ record }: Props) {
                 <div>
                   <p className="font-semibold text-gray-700">Time</p>
                   <p className="text-gray-600">
-                    {moment(record.createdOn).format("h:mm A")}
+                    {moment(new Date(record.createdOn)).format("h:mm A")}
                   </p>
                 </div>
               </div>
