@@ -85,11 +85,6 @@ function MedicalVoiceAgent() {
       }
     };
   }, [callStarted]);
-  const GetSessionDetails = async () => {
-    const result = await axios.get("/api/session-chat?sessionId=" + sessionId);
-    console.log(result.data);
-    setSessionDetail(result.data);
-  };
 
   const StartCall = () => {
     // Clean up any existing instance first
