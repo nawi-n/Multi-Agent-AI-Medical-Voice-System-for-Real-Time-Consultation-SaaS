@@ -1,12 +1,11 @@
 "use client";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { IconArrowRight } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
-import router from "next/dist/shared/lib/router/router";
 import { useRouter } from "next/navigation";
 import { Loader2Icon } from "lucide-react";
 
@@ -31,7 +30,6 @@ function DoctorAgentCard({ doctorAgent }: Props) {
   const router = useRouter();
 
   const { has } = useAuth();
-  //@ts-ignore
   const paidUser = has && has({ plan: "pro" });
   console.log("Paid User:", paidUser);
 

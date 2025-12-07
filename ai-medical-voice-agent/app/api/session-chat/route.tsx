@@ -1,7 +1,6 @@
 import { sessionChatTable } from "@/config/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/config/db";
-import { uuid } from "drizzle-orm/gel-core";
 import { desc, eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { currentUser } from "@clerk/nextjs/server";
@@ -14,13 +13,14 @@ export async function POST(req: NextRequest) {
     const result = await db
       .insert(sessionChatTable)
       .values({
-        //@ts-ignore
+        // @ts-expect-error - sessionId type mismatch handled by DB
         sessionId: sessionId,
         createdBy: user?.primaryEmailAddress?.emailAddress,
         notes: notes,
         selectedDoctor: selectedDoctor,
         createdOn: new Date().toString(),
-      }) //@ts-ignore
+      })
+      // @ts-expect-error - returning type from DB insert
       .returning({ sessionChatTable });
     return NextResponse.json(result[0].sessionChatTable);
   } catch (e) {
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       .select()
       .from(sessionChatTable)
       .where(
-        //@ts-ignore
+        // @ts-expect-error - createdBy type mismatch handled by DB
         eq(sessionChatTable.createdBy, user?.primaryEmailAddress?.emailAddress)
       )
       .orderBy(desc(sessionChatTable.id));

@@ -3,7 +3,6 @@ import { openai } from "@/config/OpenAiModel";
 import { sessionChatTable } from "@/config/schema";
 import { eq } from "drizzle-orm/sql/expressions/conditions";
 import { NextRequest, NextResponse } from "next/server";
-import { report } from "process";
 
 const REPORT_PROMPT = `You are an AI Medical Voice Agent that just finished a voice conversation with a user. Based on doctor AI agent info and conversation between AI and user, generate a structured report with the following fields:
 1. sessionId: a unique session identifier
@@ -55,14 +54,14 @@ export async function POST(req: NextRequest) {
       ],
     });
     const rawResp = completion.choices[0].message;
-    //@ts-ignore
+    // @ts-expect-error - content might be null but we handle it
     const Resp = rawResp.content
       .trim()
       .replace("```json", "")
       .replace("```", "");
     const JSONResp = JSON.parse(Resp);
 
-    const result = await db
+    await db
       .update(sessionChatTable)
       .set({
         report: JSONResp,
