@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       ", Conversation:" +
       JSON.stringify(messages);
     const completion = await openai.chat.completions.create({
-      model: "alibaba/tongyi-deepresearch-30b-a3b:free",
+      model: "meta-llama/llama-3.3-70b-instruct:free",
       messages: [
         { role: "system", content: REPORT_PROMPT },
         {

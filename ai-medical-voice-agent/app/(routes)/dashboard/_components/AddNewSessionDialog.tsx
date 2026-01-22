@@ -26,7 +26,7 @@ function AddNewSessionDialog() {
   const [loading, setLoading] = useState(false);
   const [suggestedDoctors, setSuggestedDoctors] = useState<DoctorAgent[]>();
   const [selectedDoctor, SetSelectedDoctor] = useState<DoctorAgent | null>(
-    null
+    null,
   );
   const router = useRouter();
   const [historyList, setHistoryList] = useState<sessionDetail[]>([]);
@@ -52,23 +52,44 @@ function AddNewSessionDialog() {
   };
 
   const OnClickNext = async () => {
+    if (!note || note.trim().length === 0) {
+      toast.error("Please enter your symptoms or concerns.");
+      return;
+    }
+
     setLoading(true);
     try {
       const result = await axios.post("/api/suggest-doctors", {
         notes: note,
       });
 
-      console.log(result.data);
+      console.log("Doctor suggestions response:", result.data);
+
+      // Handle error responses
+      if (result.data?.error) {
+        console.error("API Error:", result.data.error);
+        toast.error(
+          result.data.error ||
+            "Failed to get doctor suggestions. Please try again.",
+        );
+        return;
+      }
+
       // Ensure the response is an array
-      if (Array.isArray(result.data)) {
+      if (Array.isArray(result.data) && result.data.length > 0) {
         setSuggestedDoctors(result.data);
       } else {
         console.error("Invalid response format:", result.data);
-        toast.error("Failed to get doctor suggestions. Please try again.");
+        toast.error(
+          "No suitable doctors found. Please try different symptoms.",
+        );
       }
     } catch (error) {
       console.error("Error fetching doctors:", error);
-      toast.error("Failed to get doctor suggestions. Please try again.");
+      const errorMessage = axios.isAxiosError(error)
+        ? error.response?.data?.error || error.message
+        : String(error);
+      toast.error(`Failed to get suggestions: ${errorMessage}`);
     }
     setLoading(false);
   };

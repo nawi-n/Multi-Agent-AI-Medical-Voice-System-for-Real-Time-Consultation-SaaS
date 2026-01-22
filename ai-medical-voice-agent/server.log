@@ -1,0 +1,18 @@
+
+> ai-medical-voice-agent@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.7
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.8:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1134ms
+ ✓ Compiled /middleware in 381ms (221 modules)
+ ○ Compiling /_not-found ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (175kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled /_not-found in 2.3s (1294 modules)
+ POST /api/suggest-doctors 404 in 2618ms
+ ✓ Compiled in 119ms (680 modules)
+[?25h
