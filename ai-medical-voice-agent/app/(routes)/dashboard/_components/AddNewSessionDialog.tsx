@@ -58,17 +58,31 @@ function AddNewSessionDialog() {
         notes: note,
       });
 
-      console.log(result.data);
-      // Ensure the response is an array
-      if (Array.isArray(result.data)) {
-        setSuggestedDoctors(result.data);
+      const doctors = Array.isArray(result.data?.doctors)
+        ? result.data.doctors
+        : Array.isArray(result.data)
+        ? result.data
+        : null;
+
+      if (doctors) {
+        setSuggestedDoctors(doctors);
       } else {
         console.error("Invalid response format:", result.data);
-        toast.error("Failed to get doctor suggestions. Please try again.");
+        const errorMessage =
+          result.data?.error ||
+          "Failed to get doctor suggestions. Please try again.";
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Error fetching doctors:", error);
-      toast.error("Failed to get doctor suggestions. Please try again.");
+      if (axios.isAxiosError(error)) {
+        const serverMessage = error.response?.data?.error;
+        toast.error(
+          serverMessage || "Failed to get doctor suggestions. Please try again."
+        );
+      } else {
+        toast.error("Failed to get doctor suggestions. Please try again.");
+      }
     }
     setLoading(false);
   };
