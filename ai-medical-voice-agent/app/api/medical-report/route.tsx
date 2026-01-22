@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       ", Conversation:" +
       JSON.stringify(messages);
     const completion = await openai.chat.completions.create({
-      model: "alibaba/tongyi-deepresearch-30b-a3b:free",
+      model: "google/gemini-2.0-flash-exp:free",
       messages: [
         { role: "system", content: REPORT_PROMPT },
         {
@@ -71,6 +71,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(JSONResp);
   } catch (e) {
-    return NextResponse.json(e);
+    console.error("/api/medical-report error", e);
+    const message = e instanceof Error ? e.message : "Unexpected error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

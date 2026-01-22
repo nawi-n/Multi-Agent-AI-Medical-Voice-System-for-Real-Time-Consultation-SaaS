@@ -53,23 +53,70 @@ function AddNewSessionDialog() {
 
   const OnClickNext = async () => {
     setLoading(true);
-    try {
-      const result = await axios.post("/api/suggest-doctors", {
-        notes: note,
-      });
+    const maxRetries = 2;
 
-      console.log(result.data);
-      // Ensure the response is an array
-      if (Array.isArray(result.data)) {
-        setSuggestedDoctors(result.data);
-      } else {
-        console.error("Invalid response format:", result.data);
-        toast.error("Failed to get doctor suggestions. Please try again.");
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const result = await axios.post("/api/suggest-doctors", {
+          notes: note,
+        });
+
+        const doctors = Array.isArray(result.data?.doctors)
+          ? result.data.doctors
+          : Array.isArray(result.data)
+          ? result.data
+          : null;
+
+        if (doctors) {
+          setSuggestedDoctors(doctors);
+          setLoading(false);
+          return;
+        } else {
+          console.error("Invalid response format:", result.data);
+          const errorMessage =
+            result.data?.error ||
+            "Failed to get doctor suggestions. Please try again.";
+          toast.error(errorMessage);
+          setLoading(false);
+          return;
+        }
+      } catch (error) {
+        console.error(
+          `Error fetching doctors (attempt ${attempt + 1}):`,
+          error
+        );
+
+        if (axios.isAxiosError(error)) {
+          const status = error.response?.status;
+          const serverMessage = error.response?.data?.error;
+
+          // If rate limited and we have retries left, wait and retry
+          if (status === 429 && attempt < maxRetries) {
+            const delayMs = Math.pow(2, attempt) * 1000;
+            console.log(
+              `Rate limited. Retrying in ${delayMs}ms (attempt ${
+                attempt + 1
+              }/${maxRetries})`
+            );
+            toast.loading(
+              `Service busy. Retrying in ${Math.ceil(delayMs / 1000)}s...`
+            );
+            await new Promise((resolve) => setTimeout(resolve, delayMs));
+            continue;
+          }
+
+          toast.error(
+            serverMessage ||
+              "Failed to get doctor suggestions. Please try again."
+          );
+        } else {
+          toast.error("Failed to get doctor suggestions. Please try again.");
+        }
+        setLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error("Error fetching doctors:", error);
-      toast.error("Failed to get doctor suggestions. Please try again.");
     }
+
     setLoading(false);
   };
 
